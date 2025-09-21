@@ -25,6 +25,9 @@ function App() {
   // Filtering state
   const [filterStatus, setFilterStatus] = useState<'all' | 'completed' | 'incomplete'>('all');
   const [filterDueDate, setFilterDueDate] = useState('');
+  // Error state
+  const [addError, setAddError] = useState('');
+  const [editError, setEditError] = useState('');
 
   // Fetch tasks
   const fetchTodos = async () => {
@@ -42,8 +45,16 @@ function App() {
   // Add new task
   const addTodo = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTitle.trim()) return;
-    await fetch(`${API_URL}/tasks`, {
+    setAddError('');
+    if (!newTitle.trim()) {
+      setAddError('Title is required.');
+      return;
+    }
+    if (newTitle.length > 100) {
+      setAddError('Title must be 100 characters or less.');
+      return;
+    }
+    const res = await fetch(`${API_URL}/tasks`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -53,6 +64,11 @@ function App() {
         completed: false
       })
     });
+    if (!res.ok) {
+      const data = await res.json();
+      setAddError(data.error || 'Error adding task.');
+      return;
+    }
     setNewTitle('');
     setNewDescription('');
     setNewDueDate('');
@@ -69,8 +85,17 @@ function App() {
 
   const saveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setEditError('');
     if (editingId === null) return;
-    await fetch(`${API_URL}/tasks/${editingId}`, {
+    if (!editTitle.trim()) {
+      setEditError('Title is required.');
+      return;
+    }
+    if (editTitle.length > 100) {
+      setEditError('Title must be 100 characters or less.');
+      return;
+    }
+    const res = await fetch(`${API_URL}/tasks/${editingId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -81,6 +106,11 @@ function App() {
         completed: editCompleted
       })
     });
+    if (!res.ok) {
+      const data = await res.json();
+      setEditError(data.error || 'Error updating task.');
+      return;
+    }
     setEditingId(null);
     fetchTodos();
   };
@@ -120,6 +150,7 @@ function App() {
         </label>
       </div>
       <form onSubmit={addTodo} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+        {addError && <div style={{ color: 'red' }}>{addError}</div>}
         <input
           type="text"
           value={newTitle}
@@ -155,6 +186,7 @@ function App() {
             <li key={todo.id} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', marginBottom: '1rem', border: '1px solid #ccc', padding: '0.5rem' }}>
               {editingId === todo.id ? (
                 <form onSubmit={saveEdit} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                  {editError && <div style={{ color: 'red' }}>{editError}</div>}
                   <input
                     type="text"
                     value={editTitle}
