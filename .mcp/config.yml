@@ -1,0 +1,16 @@
+# MCP configuration for Spec-Kit and GitHub integration
+spec_kit:
+  tasks_path: ../tasks
+  sync:
+    github:
+      repo: Benny902/todo-spec-kit
+      issues: true
+      project: true
+      bi_directional: true
+      gh_cli: true
+      project_board: "Todo List Project"
+      labels:
+        - spec-kit
+        - todo
+      assignees:
+        - Benny902
