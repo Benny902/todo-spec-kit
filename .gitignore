@@ -1,0 +1,33 @@
+# .gitignore for todo-spec-kit
+# Ignore build output, dependencies, and IDE files
+
+# .NET
+**/bin/
+**/obj/
+*.db
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Node
+frontend/node_modules/
+
+# Logs
+*.log
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+.env
+
+# EF Core Migrations
+**/Migrations/
+
+# Ignore local config
+appsettings.Development.json
