@@ -102,13 +102,13 @@ function App() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '2rem auto', fontFamily: 'sans-serif' }}>
-      <h2>Todo List</h2>
+    <div className="todo-app-container">
+      <h2 className="todo-title">Todo List</h2>
       {/* Filtering UI */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+      <div className="todo-filters">
         <label>
           Status:
-          <select value={filterStatus} onChange={e => setFilterStatus(e.target.value as any)} style={{ marginLeft: '0.5rem' }}>
+          <select value={filterStatus} onChange={e => setFilterStatus(e.target.value as any)}>
             <option value="all">All</option>
             <option value="completed">Completed</option>
             <option value="incomplete">Incomplete</option>
@@ -116,10 +116,10 @@ function App() {
         </label>
         <label>
           Due before:
-          <input type="date" value={filterDueDate} onChange={e => setFilterDueDate(e.target.value)} style={{ marginLeft: '0.5rem' }} />
+          <input type="date" value={filterDueDate} onChange={e => setFilterDueDate(e.target.value)} />
         </label>
       </div>
-      <form onSubmit={addTodo} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+      <form onSubmit={addTodo} className="todo-form">
         <input
           type="text"
           value={newTitle}
@@ -137,10 +137,10 @@ function App() {
           value={newDueDate}
           onChange={e => setNewDueDate(e.target.value)}
         />
-        <button type="submit">Add</button>
+        <button type="submit" className="primary-btn">Add</button>
       </form>
       {loading ? <p>Loading...</p> : (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
+        <ul className="todo-list">
           {todos
             .filter(todo => {
               if (filterStatus === 'completed' && !todo.completed) return false;
@@ -152,9 +152,9 @@ function App() {
               return true;
             })
             .map(todo => (
-            <li key={todo.id} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', marginBottom: '1rem', border: '1px solid #ccc', padding: '0.5rem' }}>
+            <li key={todo.id} className={`todo-card${todo.completed ? ' completed' : ''}`}> 
               {editingId === todo.id ? (
-                <form onSubmit={saveEdit} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <form onSubmit={saveEdit} className="todo-edit-form">
                   <input
                     type="text"
                     value={editTitle}
@@ -172,32 +172,36 @@ function App() {
                     value={editDueDate}
                     onChange={e => setEditDueDate(e.target.value)}
                   />
-                  <label>
+                  <label className="checkbox-label">
                     <input
                       type="checkbox"
                       checked={editCompleted}
                       onChange={e => setEditCompleted(e.target.checked)}
                     /> Completed
                   </label>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button type="submit">Save</button>
-                    <button type="button" onClick={cancelEdit}>Cancel</button>
+                  <div className="edit-btn-group">
+                    <button type="submit" className="primary-btn">Save</button>
+                    <button type="button" className="secondary-btn" onClick={cancelEdit}>Cancel</button>
                   </div>
                 </form>
               ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div className="todo-card-content">
                   <input
                     type="checkbox"
                     checked={todo.completed}
                     onChange={() => toggleTodo(todo.id)}
                   />
-                  <span style={{ textDecoration: todo.completed ? 'line-through' : 'none', flex: 1 }}>{todo.title}</span>
-                  <button onClick={() => startEdit(todo)}>Edit</button>
-                  <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+                  <span className="todo-title-text">{todo.title}</span>
+                  <button className="icon-btn" title="Edit" onClick={() => startEdit(todo)}>
+                    ✏️
+                  </button>
+                  <button className="icon-btn" title="Delete" onClick={() => deleteTodo(todo.id)}>
+                    🗑️
+                  </button>
                 </div>
                 )}
-                {todo.description && <div><b>Description:</b> {todo.description}</div>}
-                {todo.dueDate && <div><b>Due:</b> {todo.dueDate.substring(0, 10)}</div>}
+                {todo.description && <div className="todo-desc"><b>Description:</b> {todo.description}</div>}
+                {todo.dueDate && <div className="todo-due"><b>Due:</b> {todo.dueDate.substring(0, 10)}</div>}
             </li>
           ))}
         </ul>
